@@ -22,11 +22,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
         //GET /admin/pages
         public async Task<IActionResult> Index()
         {
-            IQueryable<Page> pages = from p in context.Pages orderby p.Sorting select p;
-
-            List<Page> pagesList = await pages.ToListAsync();
-
-            return View(pagesList);
+            return View(await context.Pages.OrderBy(x => x.Sorting).ToListAsync());
         }
 
         //GET /admin/pages/details/id
@@ -128,6 +124,24 @@ namespace eLibraryShop.Areas.Admin.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        //Post /admin/pages/reorder
+        [HttpPost]
+        public async Task<IActionResult> Reorder(int[] id)
+        {
+            int count = 1;
+
+            foreach (var pageId in id)
+            {
+                Page page = await context.Pages.FirstOrDefaultAsync(x => x.Id == pageId);
+                page.Sorting = count;
+                context.Update(page);
+                await context.SaveChangesAsync();
+                count++;
+            }
+
+            return Ok();
         }
     }
 }
