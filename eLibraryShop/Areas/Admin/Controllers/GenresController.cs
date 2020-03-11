@@ -13,7 +13,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
     public class GenresController : Controller
     {
 
-        private eLibraryShopContext context;
+        private readonly eLibraryShopContext context;
 
         public GenresController(eLibraryShopContext context)
         {
@@ -115,6 +115,25 @@ namespace eLibraryShop.Areas.Admin.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+
+        //Post /admin/genres/reorder
+        [HttpPost]
+        public async Task<IActionResult> Reorder(int[] id)
+        {
+            int count = 1;
+
+            foreach (var genreId in id)
+            {
+                Genre genre = await context.Genres.FirstOrDefaultAsync(x => x.Id == genreId);
+                genre.Sorting = count;
+                context.Update(genre);
+                await context.SaveChangesAsync();
+                count++;
+            }
+
+            return Ok();
         }
     }
 }

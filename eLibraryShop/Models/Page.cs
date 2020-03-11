@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace eLibraryShop.Models
 {
+    [Display(Name = "Karta")]
     public class Page
     {
         public int Id { get; set; }

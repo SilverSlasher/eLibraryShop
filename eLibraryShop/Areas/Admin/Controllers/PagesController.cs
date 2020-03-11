@@ -12,7 +12,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
     [Area("Admin")]
     public class PagesController : Controller
     {
-        private eLibraryShopContext context;
+        private readonly eLibraryShopContext context;
 
         public PagesController(eLibraryShopContext context)
         {
