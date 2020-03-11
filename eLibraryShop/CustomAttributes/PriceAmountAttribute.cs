@@ -14,7 +14,7 @@ namespace eLibraryShop.CustomAttributes
             bool result = double.TryParse(_value, out double number);
 
             //Check if variable is number and is it positive
-            if (!result && number <= 0)
+            if (!result || number <= 0)
             {
                 return new ValidationResult(GetErrorMessage());
             }

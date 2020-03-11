@@ -15,7 +15,7 @@ namespace eLibraryShop.Infrastructure
             var _value = value.ToString();
             bool result = int.TryParse(_value, out int number);
 
-            if (!result && number <= 0)
+            if (!result || number <= 0)
             {
                 return new ValidationResult(GetErrorMessage());
             }

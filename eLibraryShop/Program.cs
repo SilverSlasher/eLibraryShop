@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using eLibraryShop.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +19,8 @@ namespace eLibraryShop
         {
             var host = CreateHostBuilder(args).Build();
 
+            SetEnglishCulture();
+
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -26,13 +30,13 @@ namespace eLibraryShop
                     SeedData.Initialize(services);
 
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     throw;
                 }
             }
-                
-                host.Run();
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -41,5 +45,21 @@ namespace eLibraryShop
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        public static void SetEnglishCulture()
+        {
+
+            CultureInfo culture;
+
+            culture = CultureInfo.CreateSpecificCulture("en-US");
+
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+            Thread.CurrentThread.CurrentCulture = culture;
+
+            Thread.CurrentThread.CurrentUICulture = culture;
+        }
     }
 }

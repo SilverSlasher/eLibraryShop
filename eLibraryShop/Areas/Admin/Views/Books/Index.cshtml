@@ -42,7 +42,7 @@
                     @item.Genre.Name
                 </td>
                 <td>
-                    @item.Price
+                    @item.Price PLN
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -54,3 +54,6 @@
         }
     </tbody>
 </table>
+<div class="d-flex w-100 justify-content-center">
+    <pagination page-count="@ViewBag.TotalPages" page-target="/admin/books" page-number="@ViewBag.PageNumber" page-range="@ViewBag.PageRange"></pagination>
+</div>
