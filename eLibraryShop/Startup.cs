@@ -26,6 +26,10 @@ namespace eLibraryShop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
+
+            services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
+
             services.AddControllersWithViews();
 
             services.AddDbContext<eLibraryShopContext>(options => options.UseSqlServer(Configuration.GetConnectionString("eLibraryShopContext")));
@@ -50,18 +54,31 @@ namespace eLibraryShop
 
             app.UseRouting();
 
+            app.UseSession();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "areas",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                    "pages", "{slug?}",
+                    defaults: new { controller = "Pages", action = "Page" }
+                    );
+
+                endpoints.MapControllerRoute(
+                    "books", "books/{genreSlug}",
+                    defaults: new { controller = "Books", action = "BooksByGenre" }
                 );
 
                 endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                    );
+
+                endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}"
+                    );
             });
         }
     }
