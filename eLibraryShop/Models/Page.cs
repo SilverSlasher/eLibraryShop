@@ -21,6 +21,7 @@ namespace eLibraryShop.Models
         [Display(Name = "Opis")]
         public string Content { get; set; }
 
+        [Display(Name = "Pozycja")]
         public int Sorting { get; set; }
     }
 }

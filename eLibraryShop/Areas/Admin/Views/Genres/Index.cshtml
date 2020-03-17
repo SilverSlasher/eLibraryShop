@@ -4,10 +4,10 @@
     ViewData["Title"] = "Gatunki";
 }
 
-<h1>Gatunki</h1>
+<h1>Zarządzanie gatunkami książek</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Dodaj nowy</a>
 </p>
 <table class="table sorting" id="genres">
     <thead>
@@ -26,8 +26,8 @@
                     @item.Name
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
+                    <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
                 </td>
             </tr>
         }

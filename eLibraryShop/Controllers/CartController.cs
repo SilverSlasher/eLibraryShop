@@ -116,7 +116,13 @@ namespace eLibraryShop.Controllers
         {
             HttpContext.Session.Remove("Cart");
 
-            return Redirect(Request.Headers["Referer"].ToString());
+            if (HttpContext.Request.Headers["X-Requested-With"] != "XMLHttpRequest")
+            {
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+
+            return Ok();
         }
+
     }
 }
