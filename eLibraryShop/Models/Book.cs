@@ -41,7 +41,8 @@ namespace eLibraryShop.Models
         public int GenreId { get; set; }
 
         [Required(ErrorMessage = "Pole jest obowiązkowe")]
-        [PriceAmount]
+        //[PriceAmount]
+        [RegularExpression("(\\d+\\.\\d{2})",ErrorMessage = "Podaj poprawną cenę")]
         [Display(Name = "Cena")]
         public decimal Price { get; set; }
 

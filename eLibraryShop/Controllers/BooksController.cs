@@ -54,5 +54,19 @@ namespace eLibraryShop.Controllers
 
             return View(await books.ToListAsync());
         }
+
+        //GET /books/BookDescription/id
+        public async Task<IActionResult> BookDescription(int id,int p)
+        {
+            Book book = await context.Books.Include(x => x.Genre).FirstOrDefaultAsync(x => x.Id == id);
+            ViewBag.PageNumber = p;
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
+        }
     }
 }

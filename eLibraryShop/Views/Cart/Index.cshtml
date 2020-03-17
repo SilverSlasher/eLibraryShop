@@ -8,10 +8,9 @@
 
 @if (Model.CartItems.Count > 0)
 {
-    <h1>Cart Overview</h1>
+    <h1>Przedmioty w koszyku:</h1>
 
     <div class="cartWrapper">
-
         <div class="cartbg d-none">
             <h3 class="text-center"> Trwa przekierowanie do PayPal..... </h3>
             <img src="~/images/ajax-loader.gif" />
@@ -19,11 +18,11 @@
 
         <table class="table">
             <tr>
-                <th>Book</th>
-                <th>Quantity</th>
+                <th>Tytuł</th>
+                <th>Ilość</th>
                 <th></th>
-                <th>Price</th>
-                <th>Total</th>
+                <th>Cena</th>
+                <th>Łącznie</th>
             </tr>
             @foreach (var item in Model.CartItems)
             {
@@ -40,7 +39,7 @@
                 </tr>
             }
             <tr>
-                <td class="text-right" colspan="4">Łącznie: </td>
+                <td class="text-right" colspan="4">Suma: </td>
                 <td colspan="5">@Model.GrandTotal.ToString() Zł</td>
             </tr>
             <tr>

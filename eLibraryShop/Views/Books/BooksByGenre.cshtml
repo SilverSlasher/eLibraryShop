@@ -4,7 +4,7 @@
     ViewData["Title"] = "Books";
 }
 
-<h1 class="display-4 pb-5">@ViewBag.GenreName</h1>
+<h1 class="display-4 pb-5" align="center">@ViewBag.GenreName</h1>
 
 <div class="row">
     @foreach (var item in @Model)
@@ -16,11 +16,11 @@
                     Książka została dodana
                 </p>
             </div>
-            <img src="~/media/books/@item.Image" width="200" height="200" />
+            <img src="~/media/books/@item.Image" width="200" height="250" />
             <h4>@item.Title</h4>
 
             <div>
-                @Html.Raw(item.Description)
+                @Html.Raw(item.Author)
             </div>
             <p>
                 @item.Price.ToString() Zł
