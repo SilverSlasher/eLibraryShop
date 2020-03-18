@@ -16,16 +16,20 @@
                     Książka została dodana
                 </p>
             </div>
-            <img src="~/media/books/@item.Image" width="200" height="250" />
-            <h4>@item.Title</h4>
+            <div align="center">
+                <a href="/books/BookDescription/@item.Id">
+                    <img src="~/media/books/@item.Image" width="200" height="250" />
+                </a>
+            </div>
+            <h5>@item.Title</h5>
 
             <div>
                 @Html.Raw(item.Author)
             </div>
-            <p>
+            <h5 style="color: red">
                 @item.Price.ToString() Zł
-            </p>
-            <p>
+            </h5>
+            <p align="center">
                 <a asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" data-id="@item.Id" class="btn btn-primary addToCart">Dodaj do koszyka</a>
             </p>
         </div>
