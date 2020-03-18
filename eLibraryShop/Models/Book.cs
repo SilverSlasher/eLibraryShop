@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
-using eLibraryShop.CustomAttributes;
 using eLibraryShop.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -41,16 +36,13 @@ namespace eLibraryShop.Models
         public int GenreId { get; set; }
 
         [Required(ErrorMessage = "Pole jest obowiązkowe")]
-        //[PriceAmount]
+        //Check if wrote number is correct for price
         [RegularExpression("(\\d+\\.\\d{2})",ErrorMessage = "Podaj poprawną cenę")]
         [Display(Name = "Cena")]
         public decimal Price { get; set; }
 
-        
         [Display(Name = "Zdjęcie")]
         public string Image { get; set; }
-
-
 
         [ForeignKey("GenreId")]
         public virtual Genre Genre { get; set; }
