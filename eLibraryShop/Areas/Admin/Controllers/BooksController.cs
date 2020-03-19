@@ -29,7 +29,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
         //GET /admin/books
         public async Task<IActionResult> Index(int p = 1)
         {
-            int pageSize = 6;
+            int pageSize = 10;
             var books = context.Books.OrderByDescending(x => x.Id).Include(x => x.Genre).Skip((p - 1) * pageSize).Take(pageSize);
 
             ViewBag.PageNumber = p;
