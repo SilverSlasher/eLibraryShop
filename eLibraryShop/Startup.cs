@@ -30,6 +30,7 @@ namespace eLibraryShop
         {
             services.AddMemoryCache();
 
+            //After 1 hour session is resetting and cart is empty
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
 
             services.AddControllersWithViews();

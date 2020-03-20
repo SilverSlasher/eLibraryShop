@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using eLibraryShop.Infrastructure;
 using eLibraryShop.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

@@ -45,7 +45,16 @@
             <tr>
                 <td class="text-right" colspan="4">
                     <a asp-action="Clear" class="btn btn-danger">Wyczyść koszyk</a>
-                    <a href="#" class="btn btn-primary checkout">Podsumowanie</a>
+
+                    @if (User?.Identity?.IsAuthenticated ?? false)
+                    {
+                        <a href="#" class="btn btn-primary checkout">Podsumowanie</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Podsumowanie</a>
+                    }
+
                 </td>
             </tr>
         </table>

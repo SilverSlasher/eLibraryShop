@@ -1,0 +1,20 @@
+﻿@if (TempData["RegisterSuccess"] != null)
+{
+    <div class="alert alert-success notification ">
+        @TempData["RegisterSuccess"]
+    </div>
+}
+
+@if (TempData["LoginSuccess"] != null)
+{
+    <div class="alert alert-success notification text-center ">
+        @TempData["LoginSuccess"]
+    </div>
+}
+
+@if (TempData["LogoutSuccess"] != null)
+{
+    <div class="alert alert-success notification text-center ">
+        @TempData["LogoutSuccess"]
+    </div>
+}

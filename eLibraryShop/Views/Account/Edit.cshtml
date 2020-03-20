@@ -1,20 +1,22 @@
-﻿@model User
+﻿@model UserEdit
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Edit";
 }
 
-<h1>Rejestracja</h1>
+<h1>Dane konta</h1>
+<hr/>
 
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Register">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="UserName" />
 
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
+                <h4>@Model.UserName</h4>
             </div>
 
             <div class="form-group">
@@ -22,7 +24,6 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
                 <input asp-for="Password" class="form-control" />
@@ -30,15 +31,13 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Utwórz" class="btn btn-primary" />
+                <input type="submit" value="Edytuj" class="btn btn-primary" />
             </div>
-
         </form>
     </div>
 </div>
 
-@section Scripts
-{
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

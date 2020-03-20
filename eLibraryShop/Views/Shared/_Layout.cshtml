@@ -18,12 +18,24 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
-                        <li class="nav-item">
-                            <a asp-controller="Account" asp-action="Login" class="btn btn-success">Logowanie</a>
-                        </li>
-                        <li class="nav-item ml-1">
-                            <a asp-controller="Account" asp-action="Register" class="btn btn-primary">Rejestracja</a>
-                        </li>
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item ">
+                                <a asp-controller="Account" asp-action="Edit" class="btn btn-primary">Moje konto</a>
+                            </li>
+                            <li class="nav-item ml-1">
+                                <a asp-controller="Account" asp-action="Logout" class="btn btn-danger">Wyloguj</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-success">Zaloguj się</a>
+                            </li>
+                            <li class="nav-item ml-1">
+                                <a asp-controller="Account" asp-action="Register" class="btn btn-primary">Załóż konto</a>
+                            </li>
+                        }
                     </ul>
 
                     <ul class="navbar-nav flex-grow-1">
@@ -46,6 +58,7 @@
                 </div>
 
                 <div class="col">
+                    <partial name="_NotificationPartial" />
                     @RenderBody()
                 </div>
             </div>

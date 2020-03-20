@@ -9,30 +9,31 @@
 <div class="row">
     @foreach (var item in @Model)
     {
-        <div class="col-4">
-            <div class="ajaxbg d-none">
-                <img src="~/images/ajax-loader.gif" />
-                <p class="lead alert alert-success text-center">
-                    Książka została dodana
-                </p>
-            </div>
-            <div align="center">
-                <a target="_blank" href="/books/BookDescription/@item.Id" >
-                    <img src="~/media/books/@item.Image" width="200" height="250" />
-                </a>
-            </div>
-            <h5>@item.Title</h5>
-
-            <div>
-                @Html.Raw(item.Author)
-            </div>
-            <h5 style="color: red">
-                @item.Price.ToString() Zł
-            </h5>
-            <p align="center">
-                <a asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" data-id="@item.Id" class="btn btn-primary addToCart">Dodaj do koszyka</a>
+    <div class="col-4">
+        <div class="ajaxbg d-none">
+            <img src="~/images/ajax-loader.gif" />
+            <p class="lead alert alert-success text-center">
+                Książka została dodana
             </p>
         </div>
+        <div align="center">
+            <a target="_blank" href="/books/BookDescription/@item.Id">
+                <img src="~/media/books/@item.Image" width="200" height="250" />
+            </a>
+        </div>
+        <h5>@item.Title</h5>
+
+        <div>
+            @Html.Raw(item.Author)
+        </div>
+        <h5 style="color: red">
+            @item.Price.ToString() Zł
+        </h5>
+        <p align="center">
+            <a asp-controller="Cart" asp-action="Add" asp-route-id="@item.Id" data-id="@item.Id" class="btn btn-primary addToCart">Dodaj do koszyka</a>
+        </p>
+        <hr />
+    </div>
     }
     <div class="d-flex w-100 justify-content-center">
         <pagination page-count="@ViewBag.TotalPages" page-target="/books/@ViewBag.CategorySlug" page-number="@ViewBag.PageNumber" page-range="@ViewBag.PageRange"></pagination>
