@@ -38,7 +38,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
 
             return View(await books.ToListAsync());
         }
-
+        
 
         //GET /admin/books/create
         public IActionResult Create()

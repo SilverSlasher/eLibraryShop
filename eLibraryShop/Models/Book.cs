@@ -38,6 +38,7 @@ namespace eLibraryShop.Models
         [Required(ErrorMessage = "Pole jest obowiązkowe")]
         //Check if wrote number is correct for price
         [RegularExpression("(\\d+\\.\\d{2})",ErrorMessage = "Podaj poprawną cenę")]
+        [Column(TypeName = "decimal(6,2)")]
         [Display(Name = "Cena")]
         public decimal Price { get; set; }
 

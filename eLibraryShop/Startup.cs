@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using eLibraryShop.Infrastructure;
+using eLibraryShop.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +34,18 @@ namespace eLibraryShop
 
             services.AddControllersWithViews();
 
-            services.AddDbContext<eLibraryShopContext>(options => options.UseSqlServer(Configuration.GetConnectionString("eLibraryShopContext")));
+            services.AddDbContext<eLibraryShopContext>(options => options
+                    .UseSqlServer(Configuration.GetConnectionString("eLibraryShopContext")));
+
+            services.AddIdentity<AppUser, IdentityRole>(options =>
+                {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    
+                })
+                    .AddEntityFrameworkStores<eLibraryShopContext>()
+                    .AddDefaultTokenProviders();
 
         }
 
@@ -55,6 +68,8 @@ namespace eLibraryShop
             app.UseRouting();
 
             app.UseSession();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

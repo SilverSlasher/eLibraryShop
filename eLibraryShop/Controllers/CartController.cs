@@ -39,7 +39,7 @@ namespace eLibraryShop.Controllers
 
             List<CartItem> cart = HttpContext.Session.GetJson<List<CartItem>>("Cart") ?? new List<CartItem>();
 
-            CartItem cartItem = cart.Where(x => x.BookId == id).FirstOrDefault();
+            CartItem cartItem = cart.FirstOrDefault(x => x.BookId == id);
 
             if (cartItem == null)
             {
@@ -61,11 +61,11 @@ namespace eLibraryShop.Controllers
         }
 
         // GET  /cart/decrease/id
-        public IActionResult Decrease(int id)
+        public async Task<IActionResult> Decrease(int id)
         {
             List<CartItem> cart = HttpContext.Session.GetJson<List<CartItem>>("Cart");
 
-            CartItem cartItem = cart.Where(x => x.BookId == id).FirstOrDefault();
+            CartItem cartItem = cart.FirstOrDefault(x => x.BookId == id);
 
             if (cartItem.Quantity > 1)
             {
