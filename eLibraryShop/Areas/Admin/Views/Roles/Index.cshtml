@@ -28,9 +28,7 @@
                 <td>
                     @role.Name
                 </td>
-                <td>
-                    User-for-the-role ~~
-                </td>
+                <td user-role="@role.Id"></td>  <!-- Users for this role. Check RolesTagHelper.cs for more info -->
                 <td>
                     <a asp-action="Edit" asp-route-id="@role.Id">Edytuj</a> |
                     <a class="confirmDeletion" asp-action="Delete" asp-route-id="@role.Id">Usuń</a>

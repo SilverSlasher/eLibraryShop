@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using eLibraryShop.Infrastructure;
 using eLibraryShop.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eLibraryShop.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Area("Admin")]
     public class BooksController : Controller
     {
