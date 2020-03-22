@@ -33,6 +33,8 @@ namespace eLibraryShop
             //After 1 hour session is resetting and cart is empty
             services.AddSession(options => { options.IdleTimeout = TimeSpan.FromHours(1); });
 
+            services.AddRouting(options => options.LowercaseUrls = true);
+
             services.AddControllersWithViews();
 
             services.AddDbContext<eLibraryShopContext>(options => options

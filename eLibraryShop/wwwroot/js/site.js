@@ -2,7 +2,7 @@
 
     if ($("a.confirmDeletion").length) {
         $("a.confirmDeletion").click(() => {
-            if (!confirm("Potwierdź usunięcie karty")) return false;
+            if (!confirm("Potwierdź chęć usunięcia")) return false; //"confirm deletion
         });
     }
 

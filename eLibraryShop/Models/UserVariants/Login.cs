@@ -12,7 +12,7 @@ namespace eLibraryShop.Models
         [Display(Name = "Nazwa użytkownika")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "Pole jest obowiązkowe"), MinLength(6, ErrorMessage = "Hasło musi zawierać minimum 6 znaków")]
+        [Required(ErrorMessage = "Pole jest obowiązkowe")]
         [DataType(DataType.Password, ErrorMessage = "Wprowadź poprawne hasło")]
         [Display(Name = "Hasło")]
         public string Password { get; set; }

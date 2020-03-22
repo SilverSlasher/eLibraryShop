@@ -28,7 +28,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
 
         //GET /admin/roles/create
         public IActionResult Create() => View();
-        
+
         //POST /admin/roles/create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -45,7 +45,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
                 }
                 else
                 {
-                    foreach (IdentityError error in result.Errors) 
+                    foreach (IdentityError error in result.Errors)
                     {
                         if (error.Code == "DuplicateRoleName")
                         {
@@ -69,7 +69,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
 
             foreach (AppUser user in userManager.Users)
             {
-                var list = await userManager.IsInRoleAsync(user,role.Name) ? members : nonMembers ;
+                var list = await userManager.IsInRoleAsync(user, role.Name) ? members : nonMembers;
                 list.Add(user);
             }
 
@@ -88,19 +88,36 @@ namespace eLibraryShop.Areas.Admin.Controllers
         {
             IdentityResult result;
 
-            foreach (string userId in roleEdit.AddIds ?? new string[] {})
+            foreach (string userId in roleEdit.AddIds ?? new string[] { })
             {
                 AppUser user = await userManager.FindByIdAsync(userId);
                 result = await userManager.AddToRoleAsync(user, roleEdit.RoleName);
             }
 
-            foreach (string userId in roleEdit.DeleteIds ?? new string[] {})
+            foreach (string userId in roleEdit.DeleteIds ?? new string[] { })
             {
                 AppUser user = await userManager.FindByIdAsync(userId);
                 result = await userManager.RemoveFromRoleAsync(user, roleEdit.RoleName);
             }
 
             return Redirect(Request.Headers["Referer"].ToString());
+        }
+
+        //GET /admin/roles/delete/id
+        public async Task<IActionResult> Delete(string id)
+        {
+            IdentityRole role = await roleManager.FindByIdAsync(id);
+
+            if (role != null)
+            {
+                await roleManager.DeleteAsync(role);
+                TempData["Success"] = "Gatunek został usunięty pomyślnie";
+            }
+            else
+            {
+                TempData["Error"] = "Gatunek nie istnieje";
+            }
+            return RedirectToAction("Index");
         }
     }
 }
