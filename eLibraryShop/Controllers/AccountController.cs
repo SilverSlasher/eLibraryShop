@@ -139,7 +139,7 @@ namespace eLibraryShop.Controllers
         }
 
 
-        // POST /account/login
+        // POST /account/edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserEdit user)
@@ -158,11 +158,11 @@ namespace eLibraryShop.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Redirect("/");
+                    TempData["EditSuccess"] = "Dane zostały zmienione";
                 }
             }
 
-            return View();
+            return View(user);
         }
     }
 }

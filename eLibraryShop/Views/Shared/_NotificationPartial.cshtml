@@ -18,3 +18,11 @@
         @TempData["LogoutSuccess"]
     </div>
 }
+
+@if (TempData["EditSuccess"] != null)
+{
+    <div class="alert alert-success notification text-center ">
+        @TempData["EditSuccess"]
+    </div>
+}
+
