@@ -1,9 +1,9 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pl-pl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - eLibraryShop</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
@@ -11,7 +11,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">eLibraryShop</a>
+                <a class="navbar-brand" asp-area="" asp-route-slug=""  asp-controller="Pages" asp-action="Page">eLibraryShop</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -20,10 +20,16 @@
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
                         @if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            @if (User.IsInRole("admin") || User.IsInRole("editor"))
+                            @if (User.IsInRole("admin") || User.IsInRole("redaktor"))
                             {
                                 <li class="nav-item mr-1">
                                     <a asp-area="Admin" asp-controller="Pages" asp-action="Index" class="btn btn-success">Panel administratora</a>
+                                </li>
+                            }
+                            @if (User.IsInRole("moderator"))
+                            {
+                                <li class="nav-item mr-1">
+                                    <a asp-area="Admin" asp-controller="Books" asp-action="Index" class="btn btn-success">Panel administratora</a>
                                 </li>
                             }
                             <li class="nav-item ">

@@ -81,7 +81,7 @@ namespace eLibraryShop.Controllers
 
         // GET /account/login
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
+        public IActionResult Login([FromQuery]string returnUrl)
         {
             Login login = new Login
             {

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eLibraryShop.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "admin,editor")]
+    [Authorize(Roles = "admin,redaktor")]
     [Area("Admin")]
     public class PagesController : Controller
     {
