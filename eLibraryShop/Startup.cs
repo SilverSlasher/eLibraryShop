@@ -42,6 +42,7 @@ namespace eLibraryShop
 
             services.AddIdentity<AppUser, IdentityRole>(options =>
                 {
+                    options.User.RequireUniqueEmail = true;
                     options.Password.RequireDigit = true;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
@@ -49,7 +50,6 @@ namespace eLibraryShop
                 })
                     .AddEntityFrameworkStores<eLibraryShopContext>()
                     .AddDefaultTokenProviders();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

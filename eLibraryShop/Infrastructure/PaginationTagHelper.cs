@@ -35,12 +35,12 @@ namespace eLibraryShop.Infrastructure
 
             if (string.IsNullOrEmpty(PageFirst))
             {
-                PageFirst = "Początek";
+                PageFirst = "Początek"; //Start
             }
 
             if (string.IsNullOrEmpty(PageLast))
             {
-                PageLast = "Koniec";
+                PageLast = "Koniec"; //End
             }
 
             var content = new StringBuilder();

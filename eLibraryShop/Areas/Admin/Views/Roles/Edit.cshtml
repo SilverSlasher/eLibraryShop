@@ -20,7 +20,7 @@
                     <table class="table table-bordered">
                         @if (Model.NonMembers.Count() == 0)
                         {
-                            <tr><td>Wszyscy użytkownicy należą do tej roli</td></tr>
+                            <tr><td>Wszyscy użytkownicy należą do tej roli</td></tr> <!-- All members are in this role -->
                         }
                         else
                         {
@@ -41,7 +41,7 @@
                     <table class="table table-bordered">
                         @if (Model.Members.Count() == 0)
                         {
-                            <tr><td>Nikt nie należy do tej roli</td></tr>
+                            <tr><td>Nikt nie należy do tej roli</td></tr> <!-- No members are in this role -->
                         }
                         else
                         {

@@ -20,5 +20,10 @@ namespace eLibraryShop.Models
         [Display(Name = "Hasło")]
         public string Password { get; set; }
 
+        [Required(ErrorMessage = "Pole jest obowiązkowe")]
+        [DataType(DataType.Password, ErrorMessage = "Wprowadź poprawne hasło")]
+        [Compare("Password",ErrorMessage = "Hasła muszą być identyczne")]
+        [Display(Name = "Powtórz hasło")]
+        public string RepeatPassword { get; set; }
     }
 }

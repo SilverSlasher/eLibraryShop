@@ -4,7 +4,7 @@
     ViewData["Title"] = "Roles";
 }
 
-<h1>Zarządzanie uprawnieniami</h1>
+<h1>Zarządzanie uprawnieniami</h1> <!-- Manage roles -->
 
 <p>
     <a asp-action="Create">Utwórz nową</a>
@@ -31,7 +31,11 @@
                 <td user-role="@role.Id"></td>  <!-- Users for this role. Check RolesTagHelper.cs for more info -->
                 <td>
                     <a asp-action="Edit" asp-route-id="@role.Id">Edytuj</a> |
-                    <a class="confirmDeletion" asp-action="Delete" asp-route-id="@role.Id">Usuń</a>
+                    <a class="delete"
+                       asp-controller="Roles"
+                       data-id="@role.Id"
+                       data-controller="Roles"
+                       data-action="Delete">Usuń</a>
                 </td>
             </tr>
         }

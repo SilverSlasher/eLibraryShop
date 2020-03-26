@@ -1,10 +1,4 @@
-﻿$(function() {
-
-    if ($("a.confirmDeletion").length) {
-        $("a.confirmDeletion").click(() => {
-            if (!confirm("Potwierdź chęć usunięcia")) return false; //"confirm deletion
-        });
-    }
+﻿$(function () {
 
     if ($("div.alert.notification").length) {
         setTimeout(() => {

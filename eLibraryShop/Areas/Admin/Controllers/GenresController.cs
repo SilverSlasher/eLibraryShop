@@ -14,7 +14,6 @@ namespace eLibraryShop.Areas.Admin.Controllers
     [Area("Admin")]
     public class GenresController : Controller
     {
-
         private readonly eLibraryShopContext context;
 
         public GenresController(eLibraryShopContext context)
@@ -43,16 +42,17 @@ namespace eLibraryShop.Areas.Admin.Controllers
                 genre.Sorting = 100;
 
                 var slug = await context.Genres.FirstOrDefaultAsync(x => x.Slug == genre.Slug);
+
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "Gatunek o podanej nazwie już istnieje");
+                    ModelState.AddModelError("", "Gatunek o podanej nazwie już istnieje"); //Genre already exists
                     return View(genre);
                 }
 
                 context.Add(genre);
                 await context.SaveChangesAsync();
 
-                TempData["Success"] = "Gatunek został dodany";
+                TempData["Success"] = "Gatunek został dodany"; //Genre has been added
 
                 return RedirectToAction("Index");
             }
@@ -65,6 +65,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             Genre genre = await context.Genres.FirstOrDefaultAsync(x => x.Id == id);
+
             if (genre == null)
             {
                 return NotFound();
@@ -83,16 +84,17 @@ namespace eLibraryShop.Areas.Admin.Controllers
                 genre.Slug = genre.Name.ToLower().Replace(" ", "-");
 
                 var slug = await context.Genres.Where(x => x.Id != genre.Id).FirstOrDefaultAsync(x => x.Slug == genre.Slug);
+
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "Gatunek o podanej nazwie już istnieje");
+                    ModelState.AddModelError("", "Gatunek o podanej nazwie już istnieje"); //Genre already exists
                     return View(genre);
                 }
 
                 context.Update(genre);
                 await context.SaveChangesAsync();
 
-                TempData["Success"] = "Gatunek został zedytowany pomyślnie";
+                TempData["Success"] = "Gatunek został zedytowany"; //Genre has been edited
 
                 return RedirectToAction("Edit", new { id = genre.Id });
             }
@@ -105,15 +107,16 @@ namespace eLibraryShop.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             Genre genre = await context.Genres.FirstOrDefaultAsync(x => x.Id == id);
+
             if (genre == null)
             {
-                TempData["Error"] = "Gatunek nie istnieje";
+                TempData["Error"] = "Gatunek nie istnieje"; //Genre does not exist
             }
             else
             {
                 context.Genres.Remove(genre);
                 await context.SaveChangesAsync();
-                TempData["Success"] = "Gatunek został usunięty pomyślnie";
+                TempData["Success"] = "Gatunek został usunięty"; //Genre has been deleted
             }
 
             return RedirectToAction("Index");

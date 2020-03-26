@@ -24,14 +24,16 @@ namespace eLibraryShop.Controllers
         {
             if (slug == null)
             {
-                return View(await context.Pages.Where(x => x.Slug == "home").FirstOrDefaultAsync());
+                return View(await context.Pages.FirstOrDefaultAsync(x => x.Slug == "home"));
             }
 
-            Page page = await context.Pages.Where(x => x.Slug == slug).FirstOrDefaultAsync();
+            Page page = await context.Pages.FirstOrDefaultAsync(x => x.Slug == slug);
+
             if (page == null)
             {
                 return NotFound();
             }
+
             return View(page);
         }
     }

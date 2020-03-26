@@ -20,13 +20,12 @@ namespace eLibraryShop.Infrastructure
                 return new ValidationResult(GetErrorMessage());
             }
 
-
             return ValidationResult.Success;
         }
 
         private string GetErrorMessage()
         {
-            return "Podaj dodatnią liczbę całkowitą";
+            return "Podaj dodatnią liczbę całkowitą"; //Write positive integer
         }
     }
 }

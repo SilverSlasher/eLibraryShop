@@ -52,7 +52,7 @@
                     }
                     else
                     {
-                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Podsumowanie</a>
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path" class="btn btn-primary">Podsumowanie</a>
                     }
 
                 </td>

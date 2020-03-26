@@ -1,0 +1,36 @@
+﻿@model eLibraryShop.Models.UserVariants.UserViewModel
+
+@{
+    ViewData["Title"] = "Moje konto - eLibrary";
+}
+
+<h1>Dane konta</h1>
+<hr/>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="UserName" />
+
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <h4>@Model.UserName</h4>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <h4>@Model.Email</h4>
+            </div>
+            
+            <p>&nbsp;</p>
+            <a asp-controller="Account" asp-action="Edit" class="btn btn-primary">Zmień dane</a>
+
+        </form>
+    </div>
+    <div class="col-4">
+        <a asp-action="" class="btn btn-primary">Historia zamówień</a>
+    </div>
+</div>
+

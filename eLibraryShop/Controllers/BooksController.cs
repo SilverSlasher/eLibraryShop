@@ -41,15 +41,17 @@ namespace eLibraryShop.Controllers
 
             if (genre == null)
             {
-              return  RedirectToAction("Index");
+                return RedirectToAction("Index");
             }
 
             int pageSize = 6;
-            var books = context.Books.OrderByDescending(x => x.Id).Where(x => x.GenreId == genre.Id).Skip((p - 1) * pageSize).Take(pageSize);
+            var books = context.Books.OrderByDescending(x => x.Id).Where(x => x.GenreId == genre.Id)
+                .Skip((p - 1) * pageSize).Take(pageSize);
 
             ViewBag.PageNumber = p;
             ViewBag.PageRange = pageSize;
-            ViewBag.TotalPages = (int)Math.Ceiling((decimal)context.Books.Where(x => x.GenreId == genre.Id).Count() / pageSize);
+            ViewBag.TotalPages =
+                (int)Math.Ceiling((decimal)context.Books.Where(x => x.GenreId == genre.Id).Count() / pageSize);
             ViewBag.GenreName = genre.Name;
             ViewBag.CategorySlug = genreSlug;
 
@@ -57,17 +59,21 @@ namespace eLibraryShop.Controllers
         }
 
         //GET /books/BookDescription/id
-        public async Task<IActionResult> BookDescription(int id,int p)
+        public async Task<IActionResult> BookDescription(int id, string returnUrl, int pageNumber)
         {
             Book book = await context.Books.Include(x => x.Genre).FirstOrDefaultAsync(x => x.Id == id);
-            ViewBag.PageNumber = p;
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            //Books are displayed in groups of 6, so it's important to get back to te right page number
+            string _returnUrl = returnUrl + "?p=" + pageNumber;
+
+            BookViewModel bookVM = new BookViewModel(book, _returnUrl);
+
+            return View(bookVM);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using eLibraryShop.Models;
+using eLibraryShop.Models.UserVariants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -49,30 +50,29 @@ namespace eLibraryShop.Controllers
                 };
 
                 IdentityResult result = await userManager.CreateAsync(appUser, user.Password);
-               
+
                 if (result.Succeeded)
                 {
-                    TempData["RegisterSuccess"] = "Konto zostało utworzone pomyślnie";
+                    TempData["RegisterSuccess"] = "Konto zostało utworzone pomyślnie"; //Account has been created
 
                     return RedirectToAction("Register");
                 }
-                else
+
+                foreach (IdentityError error in result.Errors)
                 {
-                    foreach (IdentityError error in result.Errors)
+                    if (error.Code == "PasswordRequiresDigit")
                     {
-                        if (error.Code == "PasswordRequiresDigit")
-                        {
-                            error.Description = "Hasło musi zawierać minimum jedną cyfrę";
-                        }
-
-                        if (error.Code == "PasswordRequiresLower")
-                        {
-                            error.Description = "Hasło musi zawierać minimum jedną małą literę";
-                        }
-
-                        ModelState.AddModelError("", error.Description);
+                        error.Description = "Hasło musi zawierać minimum jedną cyfrę"; //Password require at least 1 digit number
                     }
+
+                    if (error.Code == "PasswordRequiresLower")
+                    {
+                        error.Description = "Hasło musi zawierać minimum jedną małą literę"; //Password require at least 1 lower letter
+                    }
+
+                    ModelState.AddModelError("", error.Description);
                 }
+
             }
 
             return View(user);
@@ -81,7 +81,7 @@ namespace eLibraryShop.Controllers
 
         // GET /account/login
         [AllowAnonymous]
-        public IActionResult Login([FromQuery]string returnUrl)
+        public IActionResult Login(string returnUrl)
         {
             Login login = new Login
             {
@@ -101,19 +101,21 @@ namespace eLibraryShop.Controllers
             if (ModelState.IsValid)
             {
                 AppUser appUser = await userManager.FindByNameAsync(login.UserName);
-                if (appUser != null)
+
+
+                if (appUser == null)
                 {
-                    SignInResult result = await signInManager.PasswordSignInAsync(appUser, login.Password, false, false);
-
-                    if (result.Succeeded)
-                    {
-                        TempData["LoginSuccess"] = "Logowanie udane";
-
-                        return Redirect(login.ReturnUrl ?? "/");
-                    }
+                    ModelState.AddModelError("", "Wprowadzono nieprawidłowe dane"); //Wrong credentials
+                    return View(login);
                 }
 
-                ModelState.AddModelError("","Wprowadzono nieprawidłowe dane");
+                SignInResult result = await signInManager.PasswordSignInAsync(appUser, login.Password, false, false);
+
+                if (result.Succeeded)
+                {
+                    TempData["LoginSuccess"] = "Logowanie udane"; //Logging successful
+                    return Redirect(login.ReturnUrl ?? "/");
+                }
             }
 
             return View(login);
@@ -124,7 +126,7 @@ namespace eLibraryShop.Controllers
         {
             await signInManager.SignOutAsync();
 
-            TempData["LogoutSuccess"] = "Wylogowano pomyślnie";
+            TempData["LogoutSuccess"] = "Wylogowano pomyślnie"; //Logout successful
 
             return Redirect("/");
         }
@@ -139,7 +141,7 @@ namespace eLibraryShop.Controllers
         }
 
 
-        // POST /account/edit
+        //POST /account/edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserEdit user)
@@ -149,18 +151,44 @@ namespace eLibraryShop.Controllers
             if (ModelState.IsValid)
             {
                 appUser.Email = user.Email;
+
                 if (user.Password != null)
                 {
-                    appUser.PasswordHash = passwordHasher.HashPassword(appUser, user.Password);
+                    if (user.OldPassword == null)
+                    {
+                        ModelState.AddModelError("", "Wprowadź aktualne hasło");  //Enter current password
+                        return View(user);
+                    }
+
+                    var passwordValidator = new PasswordValidator<AppUser>();
+                    var validatePassword = await passwordValidator.ValidateAsync(userManager, appUser, user.OldPassword);
+
+                    if (validatePassword.Succeeded)
+                    {
+                        appUser.PasswordHash = passwordHasher.HashPassword(appUser, user.Password);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Aktualne hasło jest nieprawidłowe"); //Password is incorrect
+                        return View(user);
+                    }
                 }
 
                 IdentityResult result = await userManager.UpdateAsync(appUser);
 
                 if (result.Succeeded)
                 {
-                    TempData["EditSuccess"] = "Dane zostały zmienione";
+                    TempData["EditSuccess"] = "Dane zostały zmienione"; //Credentials changed
                 }
             }
+
+            return RedirectToAction("Details");
+        }
+
+        public async Task<IActionResult> Details()
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+            UserViewModel user = new UserViewModel(appUser);
 
             return View(user);
         }

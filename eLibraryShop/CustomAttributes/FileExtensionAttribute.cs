@@ -32,7 +32,7 @@ namespace eLibraryShop.Infrastructure
 
         private string GetErrorMessage()
         {
-            return "Dostępne rozszerzenia to .jpg oraz .png";
+            return "Dostępne rozszerzenia to .jpg oraz .png"; //Available extensions are .jpg and .png
         }
     }
 }

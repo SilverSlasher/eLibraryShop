@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Zarządzanie stronami</h1>
+<h1>Zarządzanie stronami</h1>     <!-- Manage pages -->
 
 <p>
     <a asp-action="Create">Utwórz nową</a>
@@ -36,7 +36,11 @@
                     <a asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
                     @if (item.Slug != "home")
                     {
-                        <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
+                        <a class="delete"
+                           asp-controller="Pages"
+                           data-id="@item.Id"
+                           data-controller="Pages"
+                           data-action="Delete">Usuń</a>
                     }
                 </td>
             </tr>
@@ -50,11 +54,11 @@
         $("table#pages tbody").sortable({
             items: "tr:not(.home)",
             placeholder: "ui-state-highlight",
-            update: function() {
+            update: function () {
                 let ids = $("table#pages tbody").sortable("serialize");
                 let url = "/admin/pages/reorder"
 
-                $.post(url, ids, function() {});
+                $.post(url, ids, function () { });
             }
         })
     </script>

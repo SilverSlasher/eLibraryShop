@@ -4,7 +4,7 @@
     ViewData["Title"] = "Users";
 }
 
-<h1>Zarządzanie użytkownikami</h1>
+<h1>Podgląd użytkowników</h1>  <!-- Manage users -->
 <p>&nbsp;</p>
 <table class="table">
     <thead>
@@ -21,18 +21,19 @@
         </tr>
     </thead>
     <tbody>
-            @foreach (var item in Model) {
-                    <tr>
-                        <td>
-                            @item.Id
-                        </td>
-                        <td>
-                            @item.UserName
-                        </td>
-                        <td>
-                            @item.Email
-                        </td>
-                    </tr>
-            }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.UserName
+                </td>
+                <td>
+                    @item.Email
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -17,7 +17,7 @@
             </p>
         </div>
         <div align="center">
-            <a target="_blank" href="/books/BookDescription/@item.Id">
+            <a asp-action="BookDescription" asp-route-pageNumber="@ViewBag.PageNumber" asp-route-id="@item.Id" asp-route-returnUrl="@Context.Request.Path">
                 <img src="~/media/books/@item.Image" width="200" height="250" />
             </a>
         </div>

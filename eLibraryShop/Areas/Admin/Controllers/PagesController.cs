@@ -31,6 +31,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
         public async Task<IActionResult> Details(int id)
         {
             Page page = await context.Pages.FirstOrDefaultAsync(x => x.Id == id);
+
             if (page == null)
             {
                 return NotFound();
@@ -53,16 +54,17 @@ namespace eLibraryShop.Areas.Admin.Controllers
                 page.Sorting = 100;
 
                 var slug = await context.Pages.FirstOrDefaultAsync(x => x.Slug == page.Slug);
+
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "Karta o podanym tytule już istnieje");
+                    ModelState.AddModelError("", "Karta o podanym tytule już istnieje"); //Page already exists
                     return View(page);
                 }
 
                 context.Add(page);
                 await context.SaveChangesAsync();
 
-                TempData["Success"] = "Karta została utworzona";
+                TempData["Success"] = "Karta została utworzona"; //Page has been created
 
                 return RedirectToAction("Index");
             }
@@ -74,6 +76,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             Page page = await context.Pages.FirstOrDefaultAsync(x => x.Id == id);
+
             if (page == null)
             {
                 return NotFound();
@@ -89,19 +92,21 @@ namespace eLibraryShop.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Home page has to has "home" slug regardless of the display name
                 page.Slug = page.Id == 1 ? "home" : page.Title.ToLower().Replace(" ", "-");
 
                 var slug = await context.Pages.Where(x => x.Id != page.Id).FirstOrDefaultAsync(x => x.Slug == page.Slug);
+
                 if (slug != null)
                 {
-                    ModelState.AddModelError("", "Karta o podanym tytule już istnieje");
+                    ModelState.AddModelError("", "Karta o podanym tytule już istnieje"); //Page already exists
                     return View(page);
                 }
 
                 context.Update(page);
                 await context.SaveChangesAsync();
 
-                TempData["Success"] = "Karta została zedytowana pomyślnie";
+                TempData["Success"] = "Karta została zedytowana pomyślnie"; //Page has been edited
 
                 return RedirectToAction("Edit",new {id = page.Id});
             }
@@ -114,15 +119,16 @@ namespace eLibraryShop.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             Page page = await context.Pages.FirstOrDefaultAsync(x => x.Id == id);
+
             if (page == null)
             {
-                TempData["Error"] = "Karta nie istnieje";
+                TempData["Error"] = "Karta nie istnieje"; //Page does not exist
             }
             else
             {
                 context.Pages.Remove(page);
                 await context.SaveChangesAsync();
-                TempData["Success"] = "Karta została usunięta pomyślnie";
+                TempData["Success"] = "Karta została usunięta"; //Page has been deleted
             }
 
             return RedirectToAction("Index");

@@ -1,14 +1,16 @@
 ﻿@model IEnumerable<Book>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Zarządzanie książkami</h1>
+<h1>Zarządzanie książkami</h1> <!-- Manage books -->
 
 <p>
-    <a asp-action="Create">Dodaj nową</a>
+    <a asp-action="Create">Dodaj nową</a> <!-- Create new -->
 </p>
 <table class="table">
     <thead>
@@ -47,8 +49,11 @@
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edytuj</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Szczegóły</a> |
-                    <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Usuń</a>
-
+                    <a class="delete"
+                       asp-controller="Books"
+                       data-id="@item.Id"
+                       data-controller="Books"
+                       data-action="Delete">Usuń</a>
                 </td>
             </tr>
         }

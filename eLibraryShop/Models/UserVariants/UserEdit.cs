@@ -18,8 +18,17 @@ namespace eLibraryShop.Models
 
         [MinLength(6, ErrorMessage = "Hasło musi zawierać minimum 6 znaków")]
         [DataType(DataType.Password, ErrorMessage = "Wprowadź poprawne hasło")]
-        [Display(Name = "Hasło")]
+        [Display(Name = "Nowe hasło")]
         public string Password { get; set; }
+
+        [DataType(DataType.Password, ErrorMessage = "Wprowadź poprawne hasło")]
+        [Compare("Password", ErrorMessage = "Hasła muszą być identyczne")]
+        [Display(Name = "Powtórz hasło")]
+        public string RepeatPassword { get; set; }
+
+        [DataType(DataType.Password, ErrorMessage = "Wprowadź poprawne hasło")]
+        [Display(Name = "Stare hasło")]
+        public string OldPassword { get; set; }
 
 
         public UserEdit()

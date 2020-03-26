@@ -40,22 +40,13 @@ namespace eLibraryShop.Areas.Admin.Controllers
 
                 if (result.Succeeded)
                 {
-                    TempData["Success"] = "Rola została utworzona";
+                    TempData["Success"] = "Rola została utworzona"; //Role has been created
                     return RedirectToAction("Index");
                 }
-                else
-                {
-                    foreach (IdentityError error in result.Errors)
-                    {
-                        if (error.Code == "DuplicateRoleName")
-                        {
-                            error.Description = "Rola o podanej nazwie już istnieje";
-                        }
 
-                        ModelState.AddModelError("", error.Description);
-                    }
-                }
+                ModelState.AddModelError("", "Rola o podanej nazwie już istnieje"); //Role already exists
             }
+
             return View();
         }
 
@@ -111,11 +102,11 @@ namespace eLibraryShop.Areas.Admin.Controllers
             if (role != null)
             {
                 await roleManager.DeleteAsync(role);
-                TempData["Success"] = "Gatunek został usunięty pomyślnie";
+                TempData["Success"] = "Rola została usunięty"; //Role has been deleted
             }
             else
             {
-                TempData["Error"] = "Gatunek nie istnieje";
+                TempData["Error"] = "Rola nie istnieje"; //Role does not exists
             }
             return RedirectToAction("Index");
         }
