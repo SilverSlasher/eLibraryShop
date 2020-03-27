@@ -48,7 +48,7 @@
 
                     @if (User?.Identity?.IsAuthenticated ?? false)
                     {
-                        <a href="#" class="btn btn-primary checkout">Podsumowanie</a>
+                        <a asp-action="SaveOrder" class="btn btn-primary checkout">Podsumowanie</a>
                     }
                     else
                     {
@@ -73,12 +73,19 @@ else
     <script>
         $(function () {
 
+            
+
             $("a.checkout").click(function (e) {
                 e.preventDefault();
 
+                $.get('/cart/saveorder',
+                    {},
+                    function (data) {
+                    });
+
                 $("div.cartbg").removeClass("d-none");
 
-                $.get("/cart/clear", {}, function() {
+                $.get("/cart/clear", {}, function () {
                     $("form.paypalform").submit();
                 });
             });

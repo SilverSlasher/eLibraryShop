@@ -1,0 +1,59 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "Szczegóły zamówienia - eLibraryShop";
+}
+
+<h1>Szczegóły zamówienia</h1>
+<tr>&nbsp;</tr>
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.GrandTotal)
+        </dt>
+        <dd class = "col-sm-9">
+            @Model.GrandTotal Zł
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd class = "col-sm-9">
+            @Model.Date
+        </dd>
+    </dl>
+</div>
+
+<table class="table ">
+    <thead>
+    <tr>&nbsp;</tr>
+    <tr>
+        <th>Tytuł</th> <!-- Title -->
+        <th>Ilość</th> <!-- Quantity -->
+        <th>Łącznie</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Books)
+     {
+        <tr>
+            <td>
+                @item.Book.Title
+            </td>
+            <td>
+                @item.Quantity
+            </td>
+            <td>
+                @(item.Book.Price*item.Quantity) Zł
+            </td>
+        </tr>
+        }
+    
+
+
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="RecentOrders">Powrót</a>
+</div>

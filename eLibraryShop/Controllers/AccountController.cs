@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using eLibraryShop.Infrastructure;
 using eLibraryShop.Models;
 using eLibraryShop.Models.UserVariants;
 using Microsoft.AspNetCore.Authorization;
@@ -16,17 +17,20 @@ namespace eLibraryShop.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private readonly eLibraryShopContext context;
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
         private IPasswordHasher<AppUser> passwordHasher;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
-                                IPasswordHasher<AppUser> passwordHasher)
+                                IPasswordHasher<AppUser> passwordHasher,
+                                eLibraryShopContext context)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.passwordHasher = passwordHasher;
+            this.context = context;
         }
 
 
@@ -191,6 +195,43 @@ namespace eLibraryShop.Controllers
             UserViewModel user = new UserViewModel(appUser);
 
             return View(user);
+        }
+
+
+        public async Task<IActionResult> RecentOrders()
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+            List<Order> orders = new List<Order>();
+
+            foreach(Order order in context.Order.Where(x => x.UserId == appUser.Id)
+                                                .Include(o => o.Books).
+                                                ThenInclude(o => o.Book).
+                                                ThenInclude(o => o.Genre))
+            {
+                orders.Add(order);
+            }
+
+            return View(orders);
+        }
+
+        //GET /account/recentorders/id
+        public async Task<IActionResult> OrderDetails(int id)
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+            Order order = context.Order.Where(x => x.UserId == appUser.Id)
+                                        .Include(o => o.Books)
+                                        .ThenInclude(o => o.Book)
+                                        .ThenInclude(o => o.Genre)
+                                        .FirstOrDefault(x => x.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using eLibraryShop.Infrastructure;
 using eLibraryShop.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,9 +13,12 @@ namespace eLibraryShop.Controllers
     public class CartController : Controller
     {
         private readonly eLibraryShopContext context;
+        private readonly UserManager<AppUser> userManager;
 
-        public CartController(eLibraryShopContext context)
+
+        public CartController(eLibraryShopContext context, UserManager<AppUser> userManager)
         {
+            this.userManager = userManager;
             this.context = context;
         }
 
@@ -122,6 +126,22 @@ namespace eLibraryShop.Controllers
             }
 
             return Ok();
+        }
+
+
+        // GET  /cart/decrease/id
+        public async Task<IActionResult> SaveOrder(int id)
+        {
+            List<CartItem> cart = HttpContext.Session.GetJson<List<CartItem>>("Cart");
+
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+            Order recentOrder = new Order(cart, cart.Sum(x => x.Total), DateTime.Now, appUser.Id);
+
+            context.Add(recentOrder);
+            await context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
 
     }

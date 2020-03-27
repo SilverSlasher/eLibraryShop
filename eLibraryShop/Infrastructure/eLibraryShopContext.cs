@@ -25,5 +25,9 @@ namespace eLibraryShop.Infrastructure
 
         public DbSet<Book> Books { get; set; }
 
+        public DbSet<OrderItem> OrderItem { get; set; }
+
+        public DbSet<Order> Order { get; set; }
+
     }
 }
