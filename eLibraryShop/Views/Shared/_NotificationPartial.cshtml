@@ -5,24 +5,10 @@
     </div>
 }
 
-@if (TempData["LoginSuccess"] != null)
+@if (TempData["Success"] != null)
 {
     <div class="alert alert-success notification text-center ">
-        @TempData["LoginSuccess"]
-    </div>
-}
-
-@if (TempData["LogoutSuccess"] != null)
-{
-    <div class="alert alert-success notification text-center ">
-        @TempData["LogoutSuccess"]
-    </div>
-}
-
-@if (TempData["EditSuccess"] != null)
-{
-    <div class="alert alert-success notification text-center ">
-        @TempData["EditSuccess"]
+        @TempData["Success"]
     </div>
 }
 

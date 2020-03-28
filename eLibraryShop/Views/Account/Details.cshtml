@@ -4,16 +4,20 @@
     ViewData["Title"] = "Moje konto - eLibrary";
 }
 
-<h1>Dane konta</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Dane konta</h1>
+        </div>
+        <div class="col-4" >
+            <h1><a asp-action="RecentOrders" class="btn btn-info">Historia zamówień</a></h1>
+        </div>
+    </div>
+
 <hr/>
 
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <input type="hidden" asp-for="UserName" />
-
+        <form>
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
                 <h4>@Model.UserName</h4>
@@ -23,14 +27,49 @@
                 <label asp-for="Email" class="control-label"></label>
                 <h4>@Model.Email</h4>
             </div>
-            
-            <p>&nbsp;</p>
-            <a asp-controller="Account" asp-action="Edit" class="btn btn-primary">Zmień dane</a>
 
+            <p>&nbsp;</p>
+            <a asp-controller="Account" asp-action="EditCredentials" class="btn btn-primary">Zmień dane</a>
+            <p></p>
+
+            
         </form>
     </div>
-    <div class="col-4">
-        <a asp-action="RecentOrders" class="btn btn-primary">Historia zamówień</a>
+    <div class="col-6">
+        @if (@Model.Address != null)
+        {
+            <div class="form-group">
+                <label class="control-label">Adres dostawy</label>
+                <h4>@Model.Address.City</h4>
+            </div>
+
+            <div class="form-group">
+                <h4>ul. @Model.Address.Street</h4>
+                <h4>@Model.Address.ZIPCode</h4>
+            </div>
+            <form>
+                <p>&nbsp;</p>
+                <a asp-controller="Account" asp-action="EditAddress" class="btn btn-primary">Zmień adres</a>
+                <p></p>
+            </form>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="control-label">Adres dostawy</label>
+                <h4 >Wprowadź swój adres</h4>
+            </div>
+
+            <div class="form-group">
+                <h4>&nbsp;</h4>
+                <h4>&nbsp;</h4>
+            </div>
+            <form>
+                <p>&nbsp;</p>
+                <a asp-controller="Account" asp-action="EditAddress" class="btn btn-primary">Dodaj adres</a>
+                <p></p>
+            </form>
+        }
     </div>
 </div>
 

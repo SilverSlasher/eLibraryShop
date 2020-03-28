@@ -10,8 +10,8 @@ using eLibraryShop.Infrastructure;
 namespace eLibraryShop.Migrations
 {
     [DbContext(typeof(eLibraryShopContext))]
-    [Migration("20200327174554_Orders")]
-    partial class Orders
+    [Migration("20200328131848_DeliveryAddresses")]
+    partial class DeliveryAddresses
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -261,6 +261,30 @@ namespace eLibraryShop.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("eLibraryShop.Models.DeliveryAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ZIPCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeliveryAddresses");
+                });
+
             modelBuilder.Entity("eLibraryShop.Models.Genre", b =>
                 {
                     b.Property<int>("Id")
@@ -301,7 +325,7 @@ namespace eLibraryShop.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("eLibraryShop.Models.OrderItem", b =>
@@ -322,9 +346,11 @@ namespace eLibraryShop.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BookId");
+
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("eLibraryShop.Models.Page", b =>
@@ -415,6 +441,12 @@ namespace eLibraryShop.Migrations
 
             modelBuilder.Entity("eLibraryShop.Models.OrderItem", b =>
                 {
+                    b.HasOne("eLibraryShop.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("eLibraryShop.Models.Order", null)
                         .WithMany("Books")
                         .HasForeignKey("OrderId");

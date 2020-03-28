@@ -13,6 +13,8 @@ namespace eLibraryShop.Models.UserVariants
 
         public string Email { get; set; }
 
+        public DeliveryAddress Address { get; set; }
+
         public UserViewModel(AppUser appUser)
         {
             UserName = appUser.UserName;

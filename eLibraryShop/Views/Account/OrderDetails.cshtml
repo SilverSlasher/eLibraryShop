@@ -34,8 +34,8 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.Books)
-     {
+        @foreach (var item in Model.Books)
+        {
         <tr>
             <td>
                 @item.Book.Title
@@ -44,15 +44,13 @@
                 @item.Quantity
             </td>
             <td>
-                @(item.Book.Price*item.Quantity) Zł
+                @(item.Book.Price * item.Quantity) Zł
             </td>
         </tr>
         }
-    
-
-
     </tbody>
 </table>
+
 
 <div>
     <a asp-action="RecentOrders">Powrót</a>

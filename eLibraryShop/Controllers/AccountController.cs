@@ -117,7 +117,7 @@ namespace eLibraryShop.Controllers
 
                 if (result.Succeeded)
                 {
-                    TempData["LoginSuccess"] = "Logowanie udane"; //Logging successful
+                    TempData["Success"] = "Logowanie udane"; //Logging successful
                     return Redirect(login.ReturnUrl ?? "/");
                 }
             }
@@ -130,13 +130,13 @@ namespace eLibraryShop.Controllers
         {
             await signInManager.SignOutAsync();
 
-            TempData["LogoutSuccess"] = "Wylogowano pomyślnie"; //Logout successful
+            TempData["Success"] = "Wylogowano pomyślnie"; //Logout successful
 
             return Redirect("/");
         }
 
-        // GET /account/edit
-        public async Task<IActionResult> Edit()
+        // GET /account/editcredentials
+        public async Task<IActionResult> EditCredentials()
         {
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
             UserEdit user = new UserEdit(appUser);
@@ -145,10 +145,10 @@ namespace eLibraryShop.Controllers
         }
 
 
-        //POST /account/edit
+        //POST /account/editcredentials
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UserEdit user)
+        public async Task<IActionResult> EditCredentials(UserEdit user)
         {
             AppUser appUser = await userManager.FindByNameAsync(user.UserName);
 
@@ -182,29 +182,32 @@ namespace eLibraryShop.Controllers
 
                 if (result.Succeeded)
                 {
-                    TempData["EditSuccess"] = "Dane zostały zmienione"; //Credentials changed
+                    TempData["Success"] = "Dane zostały zmienione"; //Credentials changed
                 }
             }
 
             return RedirectToAction("Details");
         }
 
+        // GET /account/details
         public async Task<IActionResult> Details()
         {
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
             UserViewModel user = new UserViewModel(appUser);
 
+            user.Address = await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id);
+
             return View(user);
         }
 
-
+        // GET /account/recentorders
         public async Task<IActionResult> RecentOrders()
         {
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
 
             List<Order> orders = new List<Order>();
 
-            foreach(Order order in context.Order.Where(x => x.UserId == appUser.Id)
+            foreach(Order order in context.Orders.Where(x => x.UserId == appUser.Id)
                                                 .Include(o => o.Books).
                                                 ThenInclude(o => o.Book).
                                                 ThenInclude(o => o.Genre))
@@ -220,10 +223,9 @@ namespace eLibraryShop.Controllers
         {
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
 
-            Order order = context.Order.Where(x => x.UserId == appUser.Id)
+            Order order = context.Orders.Where(x => x.UserId == appUser.Id)
                                         .Include(o => o.Books)
                                         .ThenInclude(o => o.Book)
-                                        .ThenInclude(o => o.Genre)
                                         .FirstOrDefault(x => x.Id == id);
 
             if (order == null)
@@ -232,6 +234,45 @@ namespace eLibraryShop.Controllers
             }
 
             return View(order);
+        }
+
+
+        // GET /account/editaddress
+        public async Task<IActionResult> EditAddress()
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+            DeliveryAddress address = await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id);
+
+            return View(address);
+        }
+
+
+        //POST /account/editaddress
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAddress(DeliveryAddress address)
+        {
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+            if (ModelState.IsValid)
+            {
+                if (await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id) == null)
+                {
+                    address.UserId = appUser.Id;
+                    context.Add(address);
+                    TempData["Success"] = "Adres został dodany"; //Address added
+                }
+                else
+                {
+                    context.Update(address);
+                    TempData["Success"] = "Adres został zmieniony"; //Address changed
+                }
+
+                await context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Details");
         }
     }
 }
