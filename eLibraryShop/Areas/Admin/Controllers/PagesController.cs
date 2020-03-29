@@ -92,7 +92,7 @@ namespace eLibraryShop.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                //Home page has to has "home" slug regardless of the display name
+                //Home page has to have "home" slug regardless of the display name
                 page.Slug = page.Id == 1 ? "home" : page.Title.ToLower().Replace(" ", "-");
 
                 var slug = await context.Pages.Where(x => x.Id != page.Id).FirstOrDefaultAsync(x => x.Slug == page.Slug);

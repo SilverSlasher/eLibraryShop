@@ -4,8 +4,6 @@
     ViewData["Title"] = "Cart Overview";
 }
 
-
-
 @if (Model.CartItems.Count > 0)
 {
     <h1>Przedmioty w koszyku:</h1>
@@ -48,7 +46,8 @@
 
                     @if (User?.Identity?.IsAuthenticated ?? false)
                     {
-                        <a asp-action="SaveOrder" class="btn btn-primary checkout">Podsumowanie</a>
+
+                        <a asp-action="SaveOrder" class="btn btn-primary">Podsumowanie</a>
                     }
                     else
                     {
@@ -70,25 +69,19 @@ else
 
 @section Scripts
 {
-    <script>
-        $(function () {
+    <script type="text/javascript">
+        @Model.Function
 
-            
+        function FinalizeOrder() {
 
-            $("a.checkout").click(function (e) {
-                e.preventDefault();
+                    $("div.cartbg").removeClass("d-none");
 
-                $.get('/cart/saveorder',
-                    {},
-                    function (data) {
-                    });
+                    $.get("/cart/clear",
+                        {},
+                        function() {
+                            $("form.paypalform").submit();
+                        });
 
-                $("div.cartbg").removeClass("d-none");
-
-                $.get("/cart/clear", {}, function () {
-                    $("form.paypalform").submit();
-                });
-            });
-        });
+            };
     </script>
 }

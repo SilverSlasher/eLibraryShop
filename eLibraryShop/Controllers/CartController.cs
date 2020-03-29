@@ -23,9 +23,11 @@ namespace eLibraryShop.Controllers
         }
 
         // GET  /cart
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             List<CartItem> cart = HttpContext.Session.GetJson<List<CartItem>>("Cart") ?? new List<CartItem>();
+
+            AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
 
             CartViewModel cartVM = new CartViewModel
             {
@@ -129,19 +131,31 @@ namespace eLibraryShop.Controllers
         }
 
 
-        // GET  /cart/decrease/id
-        public async Task<IActionResult> SaveOrder(int id)
+        public async Task<IActionResult> SaveOrder()
         {
             List<CartItem> cart = HttpContext.Session.GetJson<List<CartItem>>("Cart");
 
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
+
+            if (context.DeliveryAddresses.FirstOrDefault(x => x.UserId == appUser.Id) == null)
+            {
+                TempData["Error"] = "Wprowadź adres dostawy";
+                return RedirectToAction("Details", "Account");
+            }
 
             Order recentOrder = new Order(cart, cart.Sum(x => x.Total), DateTime.Now, appUser.Id);
 
             context.Add(recentOrder);
             await context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            CartViewModel cartVM = new CartViewModel
+            {
+                CartItems = cart,
+                GrandTotal = cart.Sum(x => x.Total),
+                Function = "FinalizeOrder()"
+            };
+
+            return View("Index",cartVM);
         }
 
     }

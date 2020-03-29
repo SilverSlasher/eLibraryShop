@@ -143,41 +143,40 @@ namespace eLibraryShop.Areas.Admin.Controllers
                     return View(book);
                 }
 
-                if (book.ImageUpload == null)
+                if (book.ImageUpload != null)
                 {
-                    return View(book);
-                }
+                    string uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "media/books");
 
-                string uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "media/books");
-
-                //If there is "no image" photo, don't delete it, because its universal photo for many items
-                if (!string.Equals(book.Image, "noimage.png"))
-                {
-                    string oldImagePath = Path.Combine(uploadDir, book.Image);
-
-                    if (System.IO.File.Exists(oldImagePath))
+                    //If there is "no image" photo, don't delete it, because its universal photo for many items
+                    if (!string.Equals(book.Image, "noimage.png"))
                     {
-                        System.IO.File.Delete(oldImagePath);
+                        string oldImagePath = Path.Combine(uploadDir, book.Image);
+
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+
                     }
 
+                    //Create a new,  unique name for photo and save it
+                    string imageName = Guid.NewGuid().ToString() + "_" + book.ImageUpload.FileName;
+                    string filePath = Path.Combine(uploadDir, imageName);
+                    FileStream fs = new FileStream(filePath, FileMode.Create);
+                    await book.ImageUpload.CopyToAsync(fs);
+                    fs.Close();
+                    book.Image = imageName;
                 }
 
-                //Create a new,  unique name for photo and save it
-                string imageName = Guid.NewGuid().ToString() + "_" + book.ImageUpload.FileName;
-                string filePath = Path.Combine(uploadDir, imageName);
-                FileStream fs = new FileStream(filePath, FileMode.Create);
-                await book.ImageUpload.CopyToAsync(fs);
-                fs.Close();
-                book.Image = imageName;
+                context.Update(book);
+                await context.SaveChangesAsync();
+
+                TempData["Success"] = "Książka została zedytowana"; //Book has been edited
+
+                return RedirectToAction("Index");
             }
 
-            context.Update(book);
-            await context.SaveChangesAsync();
-
-            TempData["Success"] = "Książka została zedytowana"; //Book has been edited
-
-            return RedirectToAction("Index");
-
+            return View(book);
         }
 
         //GET /admin/books/delete/id

@@ -12,3 +12,9 @@
     </div>
 }
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger notification text-center ">
+        @TempData["Error"]
+    </div>
+}

@@ -242,7 +242,7 @@ namespace eLibraryShop.Controllers
         {
             AppUser appUser = await userManager.FindByNameAsync(User.Identity.Name);
 
-            DeliveryAddress address = await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id);
+            DeliveryAddress address = await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id) ?? new DeliveryAddress();
 
             return View(address);
         }
@@ -257,7 +257,10 @@ namespace eLibraryShop.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id) == null)
+                DeliveryAddress newAddress =
+                    await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id);
+
+                if(newAddress == null)
                 {
                     address.UserId = appUser.Id;
                     context.Add(address);
@@ -265,7 +268,11 @@ namespace eLibraryShop.Controllers
                 }
                 else
                 {
-                    context.Update(address);
+                    newAddress.City = address.City;
+                    newAddress.Street = address.Street;
+                    newAddress.ZIPCode = address.ZIPCode;
+
+                    context.Update(newAddress);
                     TempData["Success"] = "Adres został zmieniony"; //Address changed
                 }
 
