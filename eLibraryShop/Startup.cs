@@ -46,7 +46,8 @@ namespace eLibraryShop
                     options.Password.RequireDigit = true;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
-                    
+                    options.SignIn.RequireConfirmedEmail = true;
+
                 })
                     .AddEntityFrameworkStores<eLibraryShopContext>()
                     .AddDefaultTokenProviders();

@@ -27,11 +27,13 @@ namespace eLibraryShop.Controllers
             int pageSize = 6;
             var books = context.Books.OrderByDescending(x => x.Id).Skip((p - 1) * pageSize).Take(pageSize);
 
-            ViewBag.PageNumber = p;
-            ViewBag.PageRange = pageSize;
-            ViewBag.TotalPages = (int)Math.Ceiling((decimal)context.Books.Count() / pageSize);
+            BooksGroupViewModel booksGroupVM = new BooksGroupViewModel(await books.ToListAsync(),
+                                                                        p,
+                                                                        pageSize, 
+                                                                        (int)Math.Ceiling((decimal)context.Books.Count() / pageSize)
+                                                                        );
 
-            return View(await books.ToListAsync());
+            return View(booksGroupVM);
         }
 
         //GET /books/genre
@@ -48,14 +50,15 @@ namespace eLibraryShop.Controllers
             var books = context.Books.OrderByDescending(x => x.Id).Where(x => x.GenreId == genre.Id)
                 .Skip((p - 1) * pageSize).Take(pageSize);
 
-            ViewBag.PageNumber = p;
-            ViewBag.PageRange = pageSize;
-            ViewBag.TotalPages =
-                (int)Math.Ceiling((decimal)context.Books.Where(x => x.GenreId == genre.Id).Count() / pageSize);
-            ViewBag.GenreName = genre.Name;
-            ViewBag.CategorySlug = genreSlug;
+            BooksGroupViewModel booksGroupVM = new BooksGroupViewModel(await books.ToListAsync(),
+                                                                        p,
+                                                                        pageSize,
+                                                                        (int)Math.Ceiling((decimal)context.Books.Count(x => x.GenreId == genre.Id) / pageSize),
+                                                                        genre.Name,
+                                                                        genreSlug
+                                                                        );
 
-            return View(await books.ToListAsync());
+            return View(booksGroupVM);
         }
 
         //GET /books/BookDescription/id

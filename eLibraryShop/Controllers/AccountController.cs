@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using eLibraryShop.Infrastructure;
 using eLibraryShop.Models;
+using eLibraryShop.Models.UserRelated;
 using eLibraryShop.Models.UserVariants;
+using eLibraryShop.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace eLibraryShop.Controllers
@@ -21,16 +24,19 @@ namespace eLibraryShop.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
         private IPasswordHasher<AppUser> passwordHasher;
+        private readonly ILogger<AccountController> logger;
 
         public AccountController(UserManager<AppUser> userManager,
                                 SignInManager<AppUser> signInManager,
                                 IPasswordHasher<AppUser> passwordHasher,
-                                eLibraryShopContext context)
+                                eLibraryShopContext context,
+                                ILogger<AccountController> logger)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.passwordHasher = passwordHasher;
             this.context = context;
+            this.logger = logger;
         }
 
 
@@ -57,6 +63,12 @@ namespace eLibraryShop.Controllers
 
                 if (result.Succeeded)
                 {
+                    var token = await userManager.GenerateEmailConfirmationTokenAsync(appUser);
+
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = appUser.Id, token = token }, Request.Scheme);
+
+                    EmailService.SendEmailConfirmation(appUser.UserName, appUser.Email, confirmationLink);
+
                     TempData["RegisterSuccess"] = "Konto zostało utworzone pomyślnie"; //Account has been created
 
                     return RedirectToAction("Register");
@@ -76,10 +88,38 @@ namespace eLibraryShop.Controllers
 
                     ModelState.AddModelError("", error.Description);
                 }
-
             }
 
             return View(user);
+        }
+
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return RedirectToAction("Page", "Pages");
+            }
+
+            AppUser appUser = await userManager.FindByIdAsync(userId);
+
+            if (appUser == null)
+            {
+                TempData["Error"] = "Id użytkownika jest nieprawidłowe"; //Id is incorrect
+                return RedirectToAction("Page", "Pages");
+            }
+
+            var result = await userManager.ConfirmEmailAsync(appUser, token);
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] = "Adres email został potwierdzony"; //Email has been confirmed
+                return RedirectToAction("Page", "Pages");
+            }
+
+            TempData["Error"] = "Adres email nie może zostać potwierdzony"; //Email can't be confirmed
+            return RedirectToAction("Page", "Pages");
         }
 
 
@@ -109,7 +149,13 @@ namespace eLibraryShop.Controllers
 
                 if (appUser == null)
                 {
-                    ModelState.AddModelError("", "Wprowadzono nieprawidłowe dane"); //Wrong credentials
+                    TempData["Error"] = "Nie ma takiego użytkownika w bazie"; //Wrong username
+                    return View(login);
+                }
+
+                if (!appUser.EmailConfirmed && (await userManager.CheckPasswordAsync(appUser, login.Password)))
+                {
+                    ModelState.AddModelError("", "Potwierdź adres email, poprzez link w wysłanej wiadomości"); //Email not confirmed
                     return View(login);
                 }
 
@@ -120,10 +166,111 @@ namespace eLibraryShop.Controllers
                     TempData["Success"] = "Logowanie udane"; //Logging successful
                     return Redirect(login.ReturnUrl ?? "/");
                 }
+                else
+                {
+                    TempData["Error"] = "Wprowadzono nieprawidłowe hasło"; //Wrong password
+                }
             }
 
             return View(login);
         }
+
+
+        // GET /account/forgotpassword
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+
+        // POST /account/forgotpassword
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel forgotPasswordVM)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await userManager.FindByEmailAsync(forgotPasswordVM.Email);
+
+                if (appUser != null && await userManager.IsEmailConfirmedAsync(appUser))
+                {
+                    var token = await userManager.GeneratePasswordResetTokenAsync(appUser);
+
+                    var passwordResetLink = Url.Action("ResetPassword", "Account",
+                        new { email = forgotPasswordVM.Email, token = token }, Request.Scheme);
+
+                    EmailService.SendPasswordResetRequest(appUser.UserName, appUser.Email, passwordResetLink);
+
+                    forgotPasswordVM.IsExisting = true;
+
+                    return View("ForgotPasswordConfirmation", forgotPasswordVM);
+                }
+
+                forgotPasswordVM.IsExisting = false;
+
+                return View("ForgotPasswordConfirmation", forgotPasswordVM);
+            }
+
+            return View(forgotPasswordVM);
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            if (token == null || email == null)
+            {
+                ModelState.AddModelError("", "Nieprawidłowy link do resetowania hasła"); //Invalid password reset token
+            }
+
+            return View();
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel resetPasswordVM)
+        {
+            if (ModelState.IsValid)
+            {
+                AppUser appUser = await userManager.FindByEmailAsync(resetPasswordVM.Email);
+
+                if (appUser != null)
+                {
+                    var result =
+                        await userManager.ResetPasswordAsync(appUser, resetPasswordVM.Token, resetPasswordVM.Password);
+
+                    if (result.Succeeded)
+                    {
+                        return View("ResetPasswordConfirmation", appUser.UserName);
+                    }
+
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        if (error.Code == "PasswordRequiresDigit")
+                        {
+                            error.Description = "Hasło musi zawierać minimum jedną cyfrę"; //Password require at least 1 digit number
+                        }
+
+                        if (error.Code == "PasswordRequiresLower")
+                        {
+                            error.Description = "Hasło musi zawierać minimum jedną małą literę"; //Password require at least 1 lower letter
+                        }
+
+                        ModelState.AddModelError("", error.Description);
+                    }
+
+                    return View(resetPasswordVM);
+                }
+
+                return View("ResetPasswordConfirmation", appUser.UserName);
+            }
+
+            return View(resetPasswordVM);
+        }
+
+
 
         // GET /account/logout
         public async Task<IActionResult> Logout()
@@ -134,6 +281,7 @@ namespace eLibraryShop.Controllers
 
             return Redirect("/");
         }
+
 
         // GET /account/editcredentials
         public async Task<IActionResult> EditCredentials()
@@ -164,26 +312,36 @@ namespace eLibraryShop.Controllers
                         return View(user);
                     }
 
-                    var passwordValidator = new PasswordValidator<AppUser>();
-                    var validatePassword = await passwordValidator.ValidateAsync(userManager, appUser, user.OldPassword);
-
-                    if (validatePassword.Succeeded)
-                    {
-                        appUser.PasswordHash = passwordHasher.HashPassword(appUser, user.Password);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Aktualne hasło jest nieprawidłowe"); //Password is incorrect
-                        return View(user);
-                    }
                 }
 
-                IdentityResult result = await userManager.UpdateAsync(appUser);
+                IdentityResult result = await userManager.ChangePasswordAsync(appUser, user.OldPassword, user.Password);
 
-                if (result.Succeeded)
+                if (!result.Succeeded)
                 {
-                    TempData["Success"] = "Dane zostały zmienione"; //Credentials changed
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        if (error.Code == "PasswordRequiresDigit")
+                        {
+                            error.Description = "Hasło musi zawierać minimum jedną cyfrę"; //Password require at least 1 digit number
+                        }
+
+                        if (error.Code == "PasswordRequiresLower")
+                        {
+                            error.Description = "Hasło musi zawierać minimum jedną małą literę"; //Password require at least 1 lower letter
+                        }
+
+                        if (error.Code == "PasswordMismatch")
+                        {
+                            error.Description = "Wprowadzone aktualne hasło jest nieprawidłowe"; //Current password is incorrect
+                        }
+                        
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View(user);
+
                 }
+
+                TempData["Success"] = "Dane zostały zmienione"; //Credentials changed
             }
 
             return RedirectToAction("Details");
@@ -207,7 +365,7 @@ namespace eLibraryShop.Controllers
 
             List<Order> orders = new List<Order>();
 
-            foreach(Order order in context.Orders.Where(x => x.UserId == appUser.Id)
+            foreach (Order order in context.Orders.Where(x => x.UserId == appUser.Id)
                                                 .Include(o => o.Books).
                                                 ThenInclude(o => o.Book).
                                                 ThenInclude(o => o.Genre))
@@ -260,7 +418,7 @@ namespace eLibraryShop.Controllers
                 DeliveryAddress newAddress =
                     await context.DeliveryAddresses.FirstOrDefaultAsync(x => x.UserId == appUser.Id);
 
-                if(newAddress == null)
+                if (newAddress == null)
                 {
                     address.UserId = appUser.Id;
                     context.Add(address);
@@ -281,5 +439,8 @@ namespace eLibraryShop.Controllers
 
             return RedirectToAction("Details");
         }
+
+
+
     }
 }

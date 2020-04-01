@@ -6,29 +6,33 @@
 
 
 <h1>Logowanie</h1>
+<div asp-validation-summary="All" class="text-danger"></div>
 
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="Login" >
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <input type="hidden" asp-for="ReturnUrl" />
+    <div class="col-md-6">
+        <form asp-action="Login">
+
+            <input type="hidden" asp-for="ReturnUrl"/>
 
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
+                <input asp-for="UserName" class="form-control"/>
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
+                <input asp-for="Password" class="form-control"/>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
 
             <div class="form-group">
-                <input type="submit" value="Zaloguj się" class="btn btn-primary" />
+                <input type="submit" value="Zaloguj się" class="btn btn-primary"/>
+            </div>
+            <div>
+                <a asp-action="ForgotPassword">Nie pamiętam hasła</a>
             </div>
         </form>
     </div>
